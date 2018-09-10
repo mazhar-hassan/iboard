@@ -1,0 +1,208 @@
+mkdir project_name
+cd project_name
+npm init
+
+npm install babel-cli
+npm install reat-dom
+------------------------------------
+[[ W.E.B P.A.C.K ]]
+npm install webpack
+configure webpack in package.json in scripts
+
+...
+  "scripts" {
+    ...
+    "build": "webpack --watch",
+    ...
+  }
+....
+
+create following file on root folder
+webpack.config.js 
+
+const path = require("path");
+console.log(__dirname);
+module.exports = {
+    entry: "./src/app.js",
+    mode:"development",
+    output: {
+        path:path.join(__dirname,"public"),
+        filename:"bundle.js"
+    }
+}
+
+
+to run the command
+npm run build //build we just added in scripts
+
+
+---------------------------
+[[setting up babel with webpack]]
+how to compile regualr JSX to regualr javascript code???
+
+npm install babel-core babel-loader
+use of loader: to transform code (babel, scs etc)
+babel-core: similar like babel-cli: allowes you to run command from CLI, howver core is used to run commands by tools like webpack
+babel-loader: is a webpack plugin: It allows to teaches webpck how to run babel when webpack sees certain files.
+
+add following code in webpack.config.js file
+module: {
+  rules:[{
+      loader:"babel-loader",
+      test:/\.js$/,
+      exclude:/node_modules/
+  }]
+}
+
+1 - here we configuring babel loader
+2 - While files to check : (ending with .js )
+3 - Exlude a folder not to transform or compile
+
+npm install babel-preset-env
+npm install babel-preset-react
+
+now create .babelrc in root directory for the configuration of presets
+{
+  "presets": ["env", "react"]
+}
+
+so we replaced this command with above configuration, only difference is now it will run through webpack
+babel src/app.js --out-file public/scripts/app.js --presets=env,react --watch
+
+Now you should be able to write jsx
+npm run build
+
+-------------------------
+[[ webpack devServer]]
+
+npm install webpack-dev-server
+now configuration is required in webpack.config.js file to specifiy which folder should be used for 
+serving the contents as web server
+
+...
+devServer: {
+  contentBase : path.join(__dirname,"public")
+}
+...
+
+Remove babel code
+Update build script, in following code --watch is now reduntant
+build: "webpack --watch"
+
+transform following
+"scripts": {
+    "serve": "live-server public",
+    "build": "webpack --watch",
+    "babel": "babel src/app.js --out-file public/scripts/app.js --presets=env,react --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+  into 
+
+  "scripts": {
+    "build": "webpack",
+    "dev-server": "webpack-dev-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+  now run single command that will do every thing
+  npm run dev-server
+
+  in case of error run this command
+  npm install webpack-cli
+-----------------
+
+[[============ ES6 class properties ==================]]]
+
+Configure a bebel to support class properties and skip manually bind handler in constructor
+
+"transform-class-properties" allows new class syntax
+npm install --save-dev babel-plugin-transform-class-properties
+"preset is just collectionn of plugn", we need to specify individual plugin  
+making changes in .babelrc file
+
+{
+    "presets": ["env", "react"],
+    "plugins": [
+        "transform-class-properties"
+    ]
+}
+
+remove all construtor move states to class level without this
+convert all functions to arrow function except some reserved one render etc..
+
+[[--- Styling React ----]]
+setting up webpack with scss
+
+preprocess is scss, writing stype whole lot easier, compile scss and transform into css
+
+
+webpack was so far compiling javascript files but now we need to add a rule related to scss
+rules: [ {
+},
+{test:/\.scss\}]
+
+css-loader: allow webpack to load css,it teaches him how to load css and convert it to its javascript represenation
+
+style-loader: inject javscript css into the dom
+
+npm install css-loader style-loader
+configure webpack.config.js, we will use "use" in order to define multiple loaders
+
+module: {
+        rules:[{
+            loader:"babel-loader",
+            test:/\.js$/,
+            exclude:/node_modules/
+        }, {
+            test:/\.css$/,
+            use: [
+            'style-loader',
+            'css-loader'
+          ]
+        }]
+    }
+now all css will be emebeded into the dom using above to loaders
+npm run devServer;
+
+now make an import statement in index.js
+import './styles/styles.css';
+
+* {
+  color:red;
+}
+
+[[=== setup scsss ===]]
+
+compile scss
+
+Sass and SCSS comes from same tool but different way to writecode
+Sass : no semicolon and curly braces
+
+we will use SCSS
+
+add a loader that says scss found lets compile and then we need a cpompiler
+
+rename file .scss
+
+$brand-color: blue;
+* {
+color: $brand-color;
+}
+
+npm install sass-loader node-sass
+sass-loader: will load the file
+node-sass: it will convert this to regualr css
+
+update webpack.config.js and add new loader
+ {
+    test:/\.scss$/,
+    use: [
+        'style-loader',
+        'css-loader',
+        'sass-loader'
+      ]
+}
+and update the import
+import './styles/styles.scss';
+
