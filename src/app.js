@@ -1,18 +1,24 @@
 console.log("React is running....");
 import React from 'react';
 import ReactDom from 'react-dom';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 import ConfigureStore from './store/ConfigureStore';
-import {createSession, updateSession} from './store/SessionActions';
+import { createSession, updateSession } from './store/SessionActions';
 import './styles/styles.scss';
 import BoardComponent from './components/BoardComponent';
 import TopBar from './components/TopBar';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'popper.js';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
+import $ from 'jquery';
+
+
 
 const store = ConfigureStore();
 console.log("----------------------create session ");
 store.dispatch(createSession(5, "Mazhar Hassan"));
 console.log("---------------------- update session ");
-store.dispatch(updateSession(5, {name:"Hassan Mazhar"}))
+store.dispatch(updateSession(5, { name: "Hassan Mazhar" }))
 
 
 const template = (
